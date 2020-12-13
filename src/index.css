@@ -1,13 +1,79 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+input {
+  padding: 10px;
+  margin: 30px;
+  border: 2px dashed;
+  font-size: 15px;
+  outline: none;
+}
+
+button {
+  padding: 10px;
+  margin: 30px 0;
+  border: none;
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: black;
+  color: white;
+  transition: all 0.2s;
+}
+
+label {
+  padding: 15px;
+}
+
+img {
+  align-self: center;
+  margin-bottom: 10px;
+}
+
+pre {
+  margin: 30px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.searchArea {
+  flex: 1;
+}
+
+.videosWrapper {
+  flex: 1;
+  display: flex;
+  margin: 15px;
+}
+
+.video {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  padding: 15px;
+  cursor: pointer;
+}
+
+.video:hover {
+  background-color: #efefef;
+  transition: all 0.2s;
+}
+
+.videoTitle {
+  text-align: center;
 }
