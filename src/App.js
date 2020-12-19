@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./index.css";
 
 const baseUrl = "https://www.googleapis.com/youtube/v3";
@@ -11,6 +11,7 @@ const videosFromServerFormat = (data) =>
     image: item.snippet.thumbnails.default.url,
     title: item.snippet.title,
     videoId: item.id.videoId,
+    isLiked: false,
   }));
 
 const fetchVideos = ({ limit, query }) =>
@@ -20,12 +21,18 @@ const fetchVideos = ({ limit, query }) =>
     .then((res) => res.json())
     .then(videosFromServerFormat);
 
+const onThumbsToggle = (iconIndex) => {
+  const elem = document.getElementById(`thumbs-icon-${iconIndex}`);
+  elem.classList.toggle("fa-thumbs-down");
+};
+
 const App = () => {
   const [videos, setVideos] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [resultsMaxNumber, setResultsMaxNumber] = useState(
     INITIAL_RESULTS_MAX_NUMBER
   );
+  const [likedVideos, setLikedVideos] = useState([]);
 
   const onVideoSearch = () => {
     fetchVideos({ limit: resultsMaxNumber, query: inputValue }).then(setVideos);
@@ -34,6 +41,24 @@ const App = () => {
   const onYouTubeVideoRedirect = (videoId) => {
     window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
   };
+
+  const onVideoUpdate = useCallback((updatedVideo) => {
+    setVideos((videos) => {
+      return videos.map((video) => {
+        return video.videoId === updatedVideo.videoId ? updatedVideo : video;
+      });
+    });
+  }, []);
+
+  const onVideoLike = useCallback(
+    (video) => {
+      setLikedVideos((likedVideos) => [...likedVideos, video.videoId]);
+      const updatedVideo = { ...video, isLiked: true };
+
+      onVideoUpdate(updatedVideo);
+    },
+    [onVideoUpdate]
+  );
 
   return (
     <div className="content">
@@ -54,19 +79,39 @@ const App = () => {
         </select>
       </div>
       <div className="videosWrapper">
-        {videos.map((video) => (
-          <div
-            key={video.videoId}
-            className="video"
-            onClick={() => onYouTubeVideoRedirect(video.videoId)}
-          >
-            <img key={video.image} alt="" src={video.image} />
-            <div className="videoTitle">{video.title}</div>
+        {videos.map((video, index) => (
+          <div key={index} className="videoContainer">
+            <div
+              key={video.videoId}
+              className="video"
+              onClick={() => onYouTubeVideoRedirect(video.videoId)}
+            >
+              <img key={video.image} alt="" src={video.image} />
+              <div className="videoTitle">{video.title}</div>
+            </div>
+            {!likedVideos.includes(video.videoId) && (
+              <button onClick={() => onVideoLike(video)}>♥</button>
+            )}
+            <div>
+              {likedVideos.includes(video.videoId) && (
+                <i
+                  id={`thumbs-icon-${index}`}
+                  onClick={() => onThumbsToggle(index)}
+                  className="fa fa-thumbs-up"
+                ></i>
+              )}
+            </div>
           </div>
         ))}
       </div>
-
-      <pre>{JSON.stringify(videos, null, 2)}</pre>
+      {/* <div>Liked videos:{JSON.stringify(likedVideos)}</div> */}
+      <pre>
+        Liked videos:{JSON.stringify(likedVideos)}
+        <br />
+        <br />
+        <br />
+        {JSON.stringify(videos, null, 2)}
+      </pre>
     </div>
   );
 };
