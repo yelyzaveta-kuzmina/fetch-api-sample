@@ -3,7 +3,7 @@ import deleteButtonImage from "./assets/images/delete-button.png";
 import "./index.css";
 
 const baseUrl = "https://www.googleapis.com/youtube/v3";
-const apiKey = "AIzaSyCvCEh7UqPqWwXuXdnwxuIWlTVB0wJHW48";
+const apiKey = process.env.REACT_APP_API_KEY;
 
 const INITIAL_RESULTS_MAX_NUMBER = 5;
 
