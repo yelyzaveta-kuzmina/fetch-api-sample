@@ -83,3 +83,20 @@ pre {
   text-align: center;
   height: 85px;
 }
+
+.videoFeedbackContainer {
+  display: flex;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.deleteFeedbackIcon {
+  height: 16px;
+  margin-left: 5px;
+  opacity: 0.3;
+}
+
+.deleteFeedbackIcon:hover {
+  opacity: 1;
+  transition: all 0.2s;
+}
