@@ -22,17 +22,6 @@ const fetchVideos = ({ limit, query }) =>
     .then((res) => res.json())
     .then(videosFromServerFormat);
 
-const sendLikedVideosToServer = (video) => {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ video: video }),
-  };
-  fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
-    response.json()
-  );
-};
-
 const App = () => {
   const [videos, setVideos] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -45,10 +34,6 @@ const App = () => {
     fetchVideos({ limit: resultsMaxNumber, query: inputValue }).then(setVideos);
   };
 
-  const onYouTubeVideoRedirect = (videoId) => {
-    window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
-  };
-
   const onVideoUpdate = useCallback((updatedVideo) => {
     setVideos((videos) => {
       return videos.map((video) => {
@@ -57,35 +42,56 @@ const App = () => {
     });
   }, []);
 
-  const onVideoLike = useCallback(
-    (video) => {
-      setLikedVideos((likedVideos) => [...likedVideos, video.videoId]);
-      const updatedVideo = { ...video, isLiked: true };
+  const handleUpdatedSkillFeedback = useCallback(
+    ({ video, isLikedValue }) => {
+      console.log(video);
+      console.log(isLikedValue);
 
+      const updatedVideo = { ...video, isLiked: isLikedValue };
       onVideoUpdate(updatedVideo);
-      sendLikedVideosToServer(updatedVideo);
+
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ video: video }),
+      };
+      fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+        response.json()
+      );
     },
     [onVideoUpdate]
   );
 
-  const onThumbsToggle = (iconIndex, video) => {
-    console.log(video);
-    let updatedVideo;
+  const onYouTubeVideoRedirect = (videoId) => {
+    window.open(`https://www.youtube.com/watch?v=${videoId}`, "_blank");
+  };
 
+  const onVideoLike = useCallback(
+    (video) => {
+      handleUpdatedSkillFeedback({ video, isLikedValue: true });
+      setLikedVideos((likedVideos) => [...likedVideos, video.videoId]);
+    },
+    [handleUpdatedSkillFeedback]
+  );
+
+  const onThumbsToggle = (iconIndex, video) => {
     const element = document.getElementById(`thumbs-icon-${iconIndex}`);
-    console.log(element.classList.value);
     element.classList.toggle("fa-thumbs-down");
 
     if (element.classList.value === "fa fa-thumbs-up") {
-      updatedVideo = { ...video, isLiked: true };
-      onVideoUpdate(updatedVideo);
-      sendLikedVideosToServer(updatedVideo);
+      handleUpdatedSkillFeedback({ video, isLikedValue: true });
       return;
     }
-    updatedVideo = { ...video, isLiked: false };
-    onVideoUpdate(updatedVideo);
-    sendLikedVideosToServer(updatedVideo);
+    handleUpdatedSkillFeedback({ video, isLikedValue: false });
   };
+
+  const onFeedbackDelete = useCallback(
+    (video) => {
+      setLikedVideos(likedVideos.filter((id) => id !== video.videoId));
+      handleUpdatedSkillFeedback({ video, isLikedValue: null });
+    },
+    [likedVideos, handleUpdatedSkillFeedback]
+  );
 
   return (
     <div className="content">
@@ -128,6 +134,7 @@ const App = () => {
                     className="fa fa-thumbs-up"
                   ></i>
                   <img
+                    onClick={() => onFeedbackDelete(video)}
                     className="deleteFeedbackIcon"
                     src={deleteButtonImage}
                     alt=""
