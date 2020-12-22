@@ -30,8 +30,42 @@ const App = () => {
   );
   const [likedVideos, setLikedVideos] = useState([]);
 
-  const onVideoSearch = () => {
-    fetchVideos({ limit: resultsMaxNumber, query: inputValue }).then(setVideos);
+  const onVideoSearch = async () => {
+    const data = await fetchVideos({
+      limit: resultsMaxNumber,
+      query: inputValue,
+    }).then(setVideos);
+
+    // i tried many things :D with await, separate function,
+    // but.. I am getting an empty array if console.log(videos)
+
+    // I want to send videos to my server after they fetched from Youtube API. Seems that promise is not yet resolved
+
+    // console.log("data", data);
+    // console.log("videos", videos);
+
+    // await setVideos(data);
+
+    // const requestOptions = {
+    //   method: "POST",
+    //   // headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(videos),
+    // };
+    // fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+    //   response.json()
+    // );
+    sendFetchedVideosToServer(data);
+  };
+
+  const sendFetchedVideosToServer = () => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(videos),
+    };
+    fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+      response.json()
+    );
   };
 
   const onVideoUpdate = useCallback((updatedVideo) => {
@@ -44,9 +78,6 @@ const App = () => {
 
   const handleUpdatedSkillFeedback = useCallback(
     ({ video, isLikedValue }) => {
-      console.log(video);
-      console.log(isLikedValue);
-
       const updatedVideo = { ...video, isLiked: isLikedValue };
       onVideoUpdate(updatedVideo);
 
