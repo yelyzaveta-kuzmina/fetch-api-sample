@@ -110,7 +110,7 @@ const YouTubeApiHandler = () => {
   );
 
   return (
-    <div className="content">
+    <div className="youTubeHandlerContent">
       <div className="searchArea">
         <input onChange={(e) => setInputValue(e.target.value)} />
 
