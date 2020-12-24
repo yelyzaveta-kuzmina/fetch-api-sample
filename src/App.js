@@ -34,38 +34,23 @@ const App = () => {
     const data = await fetchVideos({
       limit: resultsMaxNumber,
       query: inputValue,
-    }).then(setVideos);
+    });
+    setVideos(data);
 
-    // i tried many things :D with await, separate function,
-    // but.. I am getting an empty array if console.log(videos)
+    const mappedPromises = data.map((element) => {
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: JSON.stringify(data) }), // or map per element
+      };
+      return fetch(
+        "http://localhost:3000/videosDb",
+        requestOptions
+      ).then((res) => res.json());
+    });
 
-    // I want to send videos to my server after they fetched from Youtube API. Seems that promise is not yet resolved
-
-    // console.log("data", data);
-    // console.log("videos", videos);
-
-    // await setVideos(data);
-
-    // const requestOptions = {
-    //   method: "POST",
-    //   // headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(videos),
-    // };
-    // fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
-    //   response.json()
-    // );
-    sendFetchedVideosToServer(data);
-  };
-
-  const sendFetchedVideosToServer = () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(videos),
-    };
-    fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
-      response.json()
-    );
+    const resolvedPromises = await Promise.all(mappedPromises);
+    console.log(resolvedPromises);
   };
 
   const onVideoUpdate = useCallback((updatedVideo) => {
