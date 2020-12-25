@@ -1,3 +1,20 @@
 .wikiHandlerContent {
   display: flex;
 }
+
+.searchArea {
+  flex: 1;
+}
+
+.fetchedHTML {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+/* .currentSearchedWord {
+  background-color: orange;
+}
+
+.word {
+  margin: 5px;
+} */
