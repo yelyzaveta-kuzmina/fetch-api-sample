@@ -38,6 +38,7 @@ label {
 }
 
 img {
+  height: 150px;
   align-self: center;
   margin-bottom: 10px;
 }

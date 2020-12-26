@@ -1,11 +1,14 @@
 import { useCallback, useState } from "react";
 import deleteButtonImage from "../../assets/images/delete-button.png";
+import fetchMock from "../../helpers/fetchMock";
 import "./index.css";
+
+const INITIAL_RESULTS_MAX_NUMBER = 5;
+
+/* -------------------------------
 
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const apiKey = process.env.REACT_APP_API_KEY;
-
-const INITIAL_RESULTS_MAX_NUMBER = 5;
 
 const videosFromServerFormat = (data) =>
   data.items.map((item) => ({
@@ -15,12 +18,14 @@ const videosFromServerFormat = (data) =>
     isLiked: null,
   }));
 
-const fetchVideos = ({ limit, query }) =>
-  fetch(
-    `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
-  )
-    .then((res) => res.json())
-    .then(videosFromServerFormat);
+ const fetchVideos = ({ limit, query }) =>
+   fetch(
+     `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
+   )
+     .then((res) => res.json())
+     .then(videosFromServerFormat); // fetchVideos YouTube Api || fetchMock func to the choice
+   
+  -------------------------------- */
 
 const YouTubeApiHandler = () => {
   const [videos, setVideos] = useState([]);
@@ -31,9 +36,12 @@ const YouTubeApiHandler = () => {
   const [likedVideos, setLikedVideos] = useState([]);
 
   const onVideoSearch = async () => {
-    const data = await fetchVideos({
-      limit: resultsMaxNumber,
-      query: inputValue,
+    // const data = await fetchVideos({
+    //   limit: resultsMaxNumber,
+    //   query: inputValue,
+    // });
+    const data = await fetchMock({
+      resultsMaxNumber,
     });
     setVideos(data);
 
