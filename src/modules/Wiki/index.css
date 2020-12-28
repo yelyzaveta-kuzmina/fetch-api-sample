@@ -6,7 +6,16 @@
   flex: 1;
 }
 
-.fetchedHTML {
+.resultsContainer {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.fetchedHTML {
+  flex: 1;
+}
+
+.addedSvgs {
+  flex: 1;
+  margin: 0 30px;
 }

@@ -44,7 +44,7 @@ const YouTubeApiHandler = () => {
         body: JSON.stringify({ data: JSON.stringify(data) }), // or map per element
       };
       return fetch(
-        "http://localhost:3000/videosDb",
+        "http://localhost:3000/localDb",
         requestOptions
       ).then((res) => res.json());
     });
@@ -71,7 +71,7 @@ const YouTubeApiHandler = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ video: video }),
       };
-      fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+      fetch("http://localhost:3000/localDb", requestOptions).then((response) =>
         response.json()
       );
     },
