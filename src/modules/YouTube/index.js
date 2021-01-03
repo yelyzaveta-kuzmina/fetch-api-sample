@@ -5,12 +5,10 @@ import "./index.css";
 
 const INITIAL_RESULTS_MAX_NUMBER = 5;
 
-/* -------------------------------
-
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const apiKey = process.env.REACT_APP_API_KEY;
 
-const videosFromServerFormat = (data) =>
+const formatVideosFromServer = (data) =>
   data.items.map((item) => ({
     image: item.snippet.thumbnails.default.url,
     title: item.snippet.title,
@@ -18,14 +16,12 @@ const videosFromServerFormat = (data) =>
     isLiked: null,
   }));
 
- const fetchVideos = ({ limit, query }) =>
-   fetch(
-     `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
-   )
-     .then((res) => res.json())
-     .then(videosFromServerFormat); // fetchVideos YouTube Api || fetchMock func to the choice
-   
-  -------------------------------- */
+const fetchVideos = ({ limit, query }) =>
+  fetch(
+    `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
+  )
+    .then((res) => res.json())
+    .then(formatVideosFromServer); // fetchVideos YouTube Api || fetchMock func to the choice
 
 const YouTubeApiHandler = () => {
   const [videos, setVideos] = useState([]);
@@ -40,25 +36,27 @@ const YouTubeApiHandler = () => {
     //   limit: resultsMaxNumber,
     //   query: inputValue,
     // });
+
+    const delayTime = Math.floor(Math.random() * 1000 * 10);
     const data = await fetchMock({
-      resultsMaxNumber,
+      delay: delayTime,
+      limit: resultsMaxNumber,
     });
     setVideos(data);
 
-    const mappedPromises = data.map((element) => {
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: JSON.stringify(data) }), // or map per element
-      };
-      return fetch(
-        "http://localhost:3000/videosDb",
-        requestOptions
-      ).then((res) => res.json());
-    });
+    // const mappedPromises = data.map((element) => {
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data: JSON.stringify(data) }), // or map per element
+    };
+    return fetch("http://localhost:3000/localDb", requestOptions).then((res) =>
+      res.json()
+    );
+    // });
 
-    const resolvedPromises = await Promise.all(mappedPromises);
-    console.log(resolvedPromises);
+    // const resolvedPromises = await Promise.all(mappedPromises);
+    // console.log(resolvedPromises);
   };
 
   const onVideoUpdate = useCallback((updatedVideo) => {
@@ -79,7 +77,7 @@ const YouTubeApiHandler = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ video: video }),
       };
-      fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+      fetch("http://localhost:3000/localDb", requestOptions).then((response) =>
         response.json()
       );
     },
@@ -116,6 +114,8 @@ const YouTubeApiHandler = () => {
     },
     [likedVideos, handleUpdatedSkillFeedback]
   );
+
+  console.log(videos);
 
   return (
     <div className="youTubeHandlerContent">

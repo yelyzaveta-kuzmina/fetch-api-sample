@@ -23,7 +23,7 @@ const WikiApiHandler = () => {
     setData(fetchedData);
 
     if (fetchedData.includes(inputValue)) {
-      alert("Word found and added to the local videosDB!");
+      alert("Word found and added to the local localDB!");
 
       const requestOptions = {
         method: "POST",
@@ -33,7 +33,7 @@ const WikiApiHandler = () => {
           svg: customSvg(randomColor(), svg),
         }),
       };
-      fetch("http://localhost:3000/videosDb", requestOptions).then((response) =>
+      fetch("http://localhost:3000/localDb", requestOptions).then((response) =>
         response.json()
       );
     }
