@@ -5,6 +5,9 @@ import "./index.css";
 
 const INITIAL_RESULTS_MAX_NUMBER = 5;
 
+const delayTime = Math.floor(Math.random() * 1000 * 10);
+
+/*
 const baseUrl = "https://www.googleapis.com/youtube/v3";
 const apiKey = process.env.REACT_APP_API_KEY;
 
@@ -15,13 +18,17 @@ const formatVideosFromServer = (data) =>
     videoId: item.id.videoId,
     isLiked: null,
   }));
+*/
 
 const fetchVideos = ({ limit, query }) =>
-  fetch(
-    `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
-  )
-    .then((res) => res.json())
-    .then(formatVideosFromServer); // fetchVideos YouTube Api || fetchMock func to the choice
+  // fetch(
+  //   `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
+  // )
+  fetchMock({
+    delay: delayTime,
+    limit,
+  }).then((res) => res.json());
+// .then(formatVideosFromServer);
 
 const YouTubeApiHandler = () => {
   const [videos, setVideos] = useState([]);
@@ -32,16 +39,11 @@ const YouTubeApiHandler = () => {
   const [likedVideos, setLikedVideos] = useState([]);
 
   const onVideoSearch = async () => {
-    // const data = await fetchVideos({
-    //   limit: resultsMaxNumber,
-    //   query: inputValue,
-    // });
-
-    const delayTime = Math.floor(Math.random() * 1000 * 10);
-    const data = await fetchMock({
-      delay: delayTime,
+    const data = await fetchVideos({
       limit: resultsMaxNumber,
+      query: inputValue,
     });
+
     setVideos(data);
 
     // const mappedPromises = data.map((element) => {
