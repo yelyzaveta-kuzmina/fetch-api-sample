@@ -18,6 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start-mock": "REACT_APP_MOCK_API=true react-scripts start",
     "start-json-server": "npx json-server --watch db.json",
     "build": "react-scripts build",
     "test": "react-scripts test",

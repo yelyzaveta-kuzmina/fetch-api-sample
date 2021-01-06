@@ -2,14 +2,16 @@ import { useCallback, useState } from "react";
 import deleteButtonImage from "../../assets/images/delete-button.png";
 import fetchMock from "../../helpers/fetchMock";
 import "./index.css";
+import mockData from "./youTubeApiSearchMockData";
 
 const INITIAL_RESULTS_MAX_NUMBER = 5;
 
 const delayTime = Math.floor(Math.random() * 1000 * 10);
 
-/*
 const baseUrl = "https://www.googleapis.com/youtube/v3";
+
 const apiKey = process.env.REACT_APP_API_KEY;
+const isFetchMock = process.env.REACT_APP_MOCK_API;
 
 const formatVideosFromServer = (data) =>
   data.items.map((item) => ({
@@ -18,17 +20,21 @@ const formatVideosFromServer = (data) =>
     videoId: item.id.videoId,
     isLiked: null,
   }));
-*/
 
-const fetchVideos = ({ limit, query }) =>
-  // fetch(
-  //   `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
-  // )
-  fetchMock({
-    delay: delayTime,
-    limit,
-  }).then((res) => res.json());
-// .then(formatVideosFromServer);
+const fetchVideos = ({ limit, query }) => {
+  const fetchMockFunc = isFetchMock
+    ? fetchMock({
+        delay: delayTime,
+        limit,
+        data: mockData,
+        isError: query.includes("error"),
+      })
+    : fetch(
+        `${baseUrl}/search?part=snippet&maxResults=${limit}&q=${query}&type=video&key=${apiKey}`
+      );
+
+  return fetchMockFunc.then((res) => res.json()).then(formatVideosFromServer);
+};
 
 const YouTubeApiHandler = () => {
   const [videos, setVideos] = useState([]);
@@ -39,10 +45,17 @@ const YouTubeApiHandler = () => {
   const [likedVideos, setLikedVideos] = useState([]);
 
   const onVideoSearch = async () => {
-    const data = await fetchVideos({
-      limit: resultsMaxNumber,
-      query: inputValue,
-    });
+    let data;
+
+    try {
+      data = await fetchVideos({
+        limit: resultsMaxNumber,
+        query: inputValue,
+      });
+    } catch (e) {
+      console.log(data);
+      data = [];
+    }
 
     setVideos(data);
 
